@@ -312,102 +312,102 @@ public class TSet {
 
 	// ***********************************************************************************************//
 
-	public static List<TSetResultFormat> query(byte[] token1, byte[] token2, List<List<Record>> secureIndex,
-			int bucketSize) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-			NoSuchProviderException, NoSuchPaddingException, IOException {
-		List<TSetResultFormat> result = new ArrayList<TSetResultFormat>();
-
-		// initialize beta to 1
-		int beta = 1;
-
-		// initialize the counter to 0
-
-		int counter = 0;
-
-		int numberOfBytes = (int) Math.ceil((Math.log(bucketSize) / (Math.log(2) * 8)));
-
-		// security parameter in bytes defines the label while the value size
-		// defines the concatenation of the beta, the identifier of the document
-		// and the pointer to the bloom filter
-
-		int securityParameter = 16;
-		int valueSize = 87;
-
-		while (beta != 0) {
-			// Generate the HMAC based for each identifier
-			byte[] hmac = CryptoPrimitives.concat(
-					CryptoPrimitives.generateHmac512(keyHMACSI,
-							Integer.toString(CryptoPrimitives.getIntFromByte(
-									CryptoPrimitives.generateCmac(token1, Integer.toString(counter)), 128))),
-					CryptoPrimitives.generateHmac512(keyHMACSI, Integer.toString(CryptoPrimitives
-							.getIntFromByte(CryptoPrimitives.generateCmac(token2, Integer.toString(counter)), 128))));
-
-			// parsing the result of the random
-			byte[] bucket = new byte[numberOfBytes];
-			byte[] label = new byte[securityParameter];
-			byte[] value = new byte[valueSize];
-
-			System.arraycopy(hmac, 0, bucket, 0, bucket.length);
-			System.arraycopy(hmac, bucket.length, label, 0, label.length);
-			System.arraycopy(hmac, bucket.length + label.length, value, 0, value.length);
-
-			int counterWorNotExist = 0;
-
-			boolean flag2 = false;
-			for (Record record : secureIndex
-					.get(CryptoPrimitives.getIntFromByte(bucket, (int) (Math.log(bucketSize) / (Math.log(2)))))) {
-
-				if (Arrays.equals(record.getLabel(), label)) {
-
-					flag2 = true;
-					// De-masking the value
-
-					int k = 0;
-					for (byte b : value) {
-						value[k] = (byte) (b ^ record.getValue()[k++]);
-					}
-
-					// Spliting the array "value" to FLAG + TITLE + BF
-					// IDENTIFIER
-					byte[] flagByte = new byte[1];
-					byte[] docId = new byte[76];
-					byte[] bFId = new byte[10];
-
-					System.arraycopy(value, 0, flagByte, 0, flagByte.length);
-					System.arraycopy(value, flagByte.length, docId, 0, docId.length);
-					System.arraycopy(value, flagByte.length + docId.length, bFId, 0, bFId.length);
-
-					// instantiation of the record encoding
-					String valueMatch = "";
-
-					for (int s = 0; s < value.length; s++) {
-						valueMatch = valueMatch + (char) value[s];
-					}
-
-					// checking if it is the last identifier
-					if (String.valueOf(flagByte[0]).charAt(0) == '0') {
-						beta = 0;
-					}
-
-					// return the string of the identifier and the bloom filter
-
-					result.add(new TSetResultFormat(docId, bFId));
-
-				} else if ((counterWorNotExist == secureIndex
-						.get(CryptoPrimitives.getIntFromByte(bucket, (int) (Math.log(bucketSize) / (Math.log(2)))))
-						.size() - 1) && (flag2 == false)) {
-					// the word searched for does not exists
-					beta = 0;
-				}
-
-				counterWorNotExist++;
-
-			}
-
-			counter++;
-		}
-
-		return result;
-	}
-
+//	public static List<TSetResultFormat> query(byte[] token1, byte[] token2, List<List<Record>> secureIndex,
+//			int bucketSize) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+//			NoSuchProviderException, NoSuchPaddingException, IOException {
+//		List<TSetResultFormat> result = new ArrayList<TSetResultFormat>();
+//
+//		// initialize beta to 1
+//		int beta = 1;
+//
+//		// initialize the counter to 0
+//
+//		int counter = 0;
+//
+//		int numberOfBytes = (int) Math.ceil((Math.log(bucketSize) / (Math.log(2) * 8)));
+//
+//		// security parameter in bytes defines the label while the value size
+//		// defines the concatenation of the beta, the identifier of the document
+//		// and the pointer to the bloom filter
+//
+//		int securityParameter = 16;
+//		int valueSize = 87;
+//
+//		while (beta != 0) {
+//			// Generate the HMAC based for each identifier
+//			byte[] hmac = CryptoPrimitives.concat(
+//					CryptoPrimitives.generateHmac512(keyHMACSI,
+//							Integer.toString(CryptoPrimitives.getIntFromByte(
+//									CryptoPrimitives.generateCmac(token1, Integer.toString(counter)), 128))),
+//					CryptoPrimitives.generateHmac512(keyHMACSI, Integer.toString(CryptoPrimitives
+//							.getIntFromByte(CryptoPrimitives.generateCmac(token2, Integer.toString(counter)), 128))));
+//
+//			// parsing the result of the random
+//			byte[] bucket = new byte[numberOfBytes];
+//			byte[] label = new byte[securityParameter];
+//			byte[] value = new byte[valueSize];
+//
+//			System.arraycopy(hmac, 0, bucket, 0, bucket.length);
+//			System.arraycopy(hmac, bucket.length, label, 0, label.length);
+//			System.arraycopy(hmac, bucket.length + label.length, value, 0, value.length);
+//
+//			int counterWorNotExist = 0;
+//
+//			boolean flag2 = false;
+//			for (Record record : secureIndex
+//					.get(CryptoPrimitives.getIntFromByte(bucket, (int) (Math.log(bucketSize) / (Math.log(2)))))) {
+//
+//				if (Arrays.equals(record.getLabel(), label)) {
+//
+//					flag2 = true;
+//					// De-masking the value
+//
+//					int k = 0;
+//					for (byte b : value) {
+//						value[k] = (byte) (b ^ record.getValue()[k++]);
+//					}
+//
+//					// Spliting the array "value" to FLAG + TITLE + BF
+//					// IDENTIFIER
+//					byte[] flagByte = new byte[1];
+//					byte[] docId = new byte[76];
+//					byte[] bFId = new byte[10];
+//
+//					System.arraycopy(value, 0, flagByte, 0, flagByte.length);
+//					System.arraycopy(value, flagByte.length, docId, 0, docId.length);
+//					System.arraycopy(value, flagByte.length + docId.length, bFId, 0, bFId.length);
+//
+//					// instantiation of the record encoding
+//					String valueMatch = "";
+//
+//					for (int s = 0; s < value.length; s++) {
+//						valueMatch = valueMatch + (char) value[s];
+//					}
+//
+//					// checking if it is the last identifier
+//					if (String.valueOf(flagByte[0]).charAt(0) == '0') {
+//						beta = 0;
+//					}
+//
+//					// return the string of the identifier and the bloom filter
+//
+//					result.add(new TSetResultFormat(docId, bFId));
+//
+//				} else if ((counterWorNotExist == secureIndex
+//						.get(CryptoPrimitives.getIntFromByte(bucket, (int) (Math.log(bucketSize) / (Math.log(2)))))
+//						.size() - 1) && (flag2 == false)) {
+//					// the word searched for does not exists
+//					beta = 0;
+//				}
+//
+//				counterWorNotExist++;
+//
+//			}
+//
+//			counter++;
+//		}
+//
+//		return result;
+//	}
+//
 }

@@ -56,7 +56,10 @@ public class TextProc {
 
 		Printer.debugln("\n Beginning of text extraction \n");
 
+		//提取指定路径下的全部文件，存在listOfFile
 		listf(pwd, listOfFile);
+		//多线程并发使用所有文件生成查询表lookup1 & lookup2
+		//lookup1 (word, ids)
 		try {
 			TextExtractPar.extractTextPar(listOfFile);
 		} catch (InterruptedException e2) {
@@ -67,6 +70,8 @@ public class TextProc {
 			e2.printStackTrace();
 		}
 
+
+		//好吧，不是很能理解这个partition在这的意思 不过好像也没用上
 		// ***********************************************************************************************//
 
 		///////////////////// Partitioning /////////////////////////////
@@ -85,9 +90,11 @@ public class TextProc {
 	 */
 	public static void listf(String directoryName, ArrayList<File> files) {
 		File directory = new File(directoryName);
-
+		//System.out.print(directory);
 		// get all the files from a directory
 		File[] fList = directory.listFiles();
+		//System.out.print(fList);
+
 		for (File file : fList) {
 			if (file.isFile()) {
 				files.add(file);
@@ -95,6 +102,7 @@ public class TextProc {
 				listf(file.getAbsolutePath(), files);
 			}
 		}
+
 	}
 
 }

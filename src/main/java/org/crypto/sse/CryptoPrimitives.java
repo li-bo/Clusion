@@ -24,7 +24,6 @@
 
 package org.crypto.sse;
 
-import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.engines.AESFastEngine;
@@ -258,7 +257,6 @@ public class CryptoPrimitives {
 		return output;
 	}
 	
-	
 	// ***********************************************************************************************//
 
 	///////////////////// Message authentication+Encryption (Authenticated
@@ -428,7 +426,7 @@ public class CryptoPrimitives {
 	public static byte[] decryptAES_CTR_String(byte[] input, byte[] keyBytes)
 			throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchProviderException, NoSuchPaddingException, IOException {
-
+		//System.out.println("+++"+input.length);
 		byte[] ivBytes = new byte[16];
 
 		byte[] cipherText = new byte[input.length - 16];
@@ -712,7 +710,8 @@ public class CryptoPrimitives {
 		// le premier block contient le vecteur d�ntialization
 		byte[][] tmpResults1 = new byte[plaintext.length + 1][blockSize];
 		tmpResults1[0] = new byte[blockSize];
-		;
+		//会给它个初始化的值吗
+//		System.out.println("0 is "+ tmpResults1[0]);
 
 		// temporary results 2
 		byte[][] tmpResults2 = new byte[plaintext.length][blockSize];
@@ -727,7 +726,7 @@ public class CryptoPrimitives {
 				blocks[i][j] = 0;
 			}
 		}
-
+//天啊 这么做是为什么
 		for (int i = 0; i < plaintext.length; i++) {
 
 			byte[] hmac = CryptoPrimitives.generateHmac(keyHash, tmpResults1[i]);
@@ -738,6 +737,7 @@ public class CryptoPrimitives {
 
 			results[i] = CryptoPrimitives.generateHmac(keyHash2, tmpResults2[i]);
 			tmpResults1[i + 1] = results[i];
+			//System.out.println("result is "+ results[i]);
 
 		}
 
@@ -834,7 +834,8 @@ public class CryptoPrimitives {
 		return bitArray;
 	}
 
-	public static int getIntFromByte(byte[] byteArray, int numberOfBits) {
+	public static int
+	getIntFromByte(byte[] byteArray, int numberOfBits) {
 		int result = 0;
 		int[] bitArray = getBits(byteArray, numberOfBits);
 

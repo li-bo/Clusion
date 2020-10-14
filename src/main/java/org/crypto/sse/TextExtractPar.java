@@ -9,7 +9,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,7 @@
 - Pdf files  .pdf
 - All media files such as pictures and videos are not parsed and only the title of the media file is taken as input gif, jpeg, .wmv, .mpeg, .mp4
 */
-//***********************************************************************************************//	
+//***********************************************************************************************//
 
 package org.crypto.sse;
 
@@ -41,7 +41,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -98,6 +97,7 @@ public class TextExtractPar implements Serializable {
 		return this.lookup2;
 	}
 
+
 	public static void extractTextPar(ArrayList<File> listOfFile)
 			throws InterruptedException, ExecutionException, IOException {
 
@@ -123,7 +123,6 @@ public class TextExtractPar implements Serializable {
 			} else {
 				tmp = new File[listOfFile.size() / threads];
 				for (int j = 0; j < listOfFile.size() / threads; j++) {
-
 					tmp[j] = listOfFile.get((listOfFile.size() / threads) * i + j);
 				}
 			}
@@ -167,7 +166,7 @@ public class TextExtractPar implements Serializable {
 		Multimap<String, String> lookup2 = ArrayListMultimap.create();
 
 		for (File file : listOfFile) {
-
+            //线程对应的进度条？
 			for (int j = 0; j < 100; j++) {
 
 				if (counter == (int) ((j + 1) * listOfFile.length / 100)) {
@@ -273,7 +272,7 @@ public class TextExtractPar implements Serializable {
 					for (String rawText : extractor.getParagraphText()) {
 						lines.add(extractor.stripFields(rawText));
 					}
-					
+
 					extractor.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -368,16 +367,15 @@ public class TextExtractPar implements Serializable {
 				List<String> token = new ArrayList<String>();
 				//removing numbers/1-letter keywords
 				for (int j=0; j<token0.size();j++){
+					//字符串中不包含数字，长度>1
 					if ((!token0.get(j).matches(".*\\d+.*")
 							&&
 							(token0.get(j)).length() >1)){
 						token.add(token0.get(j));
 					}
 				}
-				
+
 				temporaryCounter = temporaryCounter + token.size();
-				
-				
 
 				for (int j = 0; j < token.size(); j++) {
 
